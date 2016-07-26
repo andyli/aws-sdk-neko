@@ -1,0 +1,5 @@
+.git* export-ignore
+.travis.yml export-ignore
+aws-sdk-cpp export-ignore
+test.hxml export-ignore
+test export-ignore
