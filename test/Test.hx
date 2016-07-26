@@ -15,14 +15,6 @@ class Test extends TestCase {
 		case v: v;
 	};
 
-	override function setup():Void {
-		Aws.initAPI();
-	}
-
-	override function tearDown():Void {
-		Aws.shutdownAPI();
-	}
-
 	function test_S3Client():Void {
 		var client = new S3Client(AWS_DEFAULT_REGION);
 		assertTrue(true);
@@ -30,7 +22,8 @@ class Test extends TestCase {
 
 	function test_TransferClient_uploadFile():Void {
 		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
-		var fileName = sys.FileSystem.fullPath("../CMakeLists.txt");
+		var fileName = sys.FileSystem.absolutePath("../CMakeLists.txt");
+		trace(fileName);
 		var bucketName = S3BUCKET_NAME;
 		var keyName = "CMakeLists.txt";
 		var contentType = "application/octet-stream";
@@ -44,7 +37,9 @@ class Test extends TestCase {
 	static function main():Void {
 		var runner = new TestRunner();
 		runner.add(new Test());
+		Aws.initAPI();
 		var succeeded = runner.run();
+		Aws.shutdownAPI();
 		if (!succeeded) {
 			Sys.exit(1);
 		}

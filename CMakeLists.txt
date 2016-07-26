@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(aws CXX)
 
@@ -90,10 +90,16 @@ target_link_libraries(aws.ndll neko aws-cpp-sdk-s3 aws-cpp-sdk-transfer)
 set(HAXE haxe CACHE STRING "Haxe compiler")
 set(NEKO neko CACHE STRING "Neko VM")
 
+file(GLOB_RECURSE haxe_src_files
+	src/*.hx
+	test/*.hx
+)
+
 add_custom_command(
 	OUTPUT ${CMAKE_SOURCE_DIR}/bin/Test.n
 	COMMAND ${HAXE} ${CMAKE_SOURCE_DIR}/test.hxml
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	DEPENDS ${haxe_src_files} ${CMAKE_SOURCE_DIR}/test.hxml
 )
 
 add_custom_command(
