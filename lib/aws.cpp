@@ -8,7 +8,6 @@
 using namespace Aws::Client;
 using namespace Aws::Transfer;
 using namespace Aws::S3;
-// using namespace Aws::S3::Model;
 
 static const char* ALLOCATION_TAG = "aws-skd-neko";
 static Aws::SDKOptions options;
