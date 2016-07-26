@@ -57,6 +57,7 @@ if (NOT EXISTS ${aws-sdk-cpp_DIR})
 			-DENABLE_UNITY_BUILD=ON
 			-DFORCE_SHARED_CRT=OFF
 			-DENABLE_TESTING=OFF
+			"-DBUILD_ONLY=s3;transfer"
 			${CMAKE_SOURCE_DIR}/aws-sdk-cpp
 		WORKING_DIRECTORY ${aws-sdk-cpp_DIR}
 	)
