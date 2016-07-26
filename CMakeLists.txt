@@ -52,6 +52,7 @@ if (NOT EXISTS ${aws-sdk-cpp_DIR})
 	file(MAKE_DIRECTORY ${aws-sdk-cpp_DIR})
 	execute_process(
 		COMMAND ${CMAKE_COMMAND}
+			-G ${CMAKE_GENERATOR}
 			-Wno-dev
 			-DBUILD_SHARED_LIBS=OFF
 			-DENABLE_UNITY_BUILD=ON
