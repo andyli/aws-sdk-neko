@@ -6,6 +6,15 @@ import aws.s3.*;
 import aws.transfer.*;
 
 class Test extends TestCase {
+	public var AWS_DEFAULT_REGION = switch (Sys.getEnv("AWS_DEFAULT_REGION")) {
+		case null, "": throw 'AWS_DEFAULT_REGION is not set';
+		case v: v;
+	};
+	public var S3BUCKET_NAME = switch (Sys.getEnv("S3BUCKET_NAME")) {
+		case null, "": throw 'S3BUCKET_NAME is not set';
+		case v: v;
+	};
+
 	override function setup():Void {
 		Aws.initAPI();
 	}
@@ -15,14 +24,14 @@ class Test extends TestCase {
 	}
 
 	function test_S3Client():Void {
-		var client = new S3Client(EU_WEST_1);
+		var client = new S3Client(AWS_DEFAULT_REGION);
 		assertTrue(true);
 	}
 
 	function test_TransferClient_uploadFile():Void {
-		var client = new TransferClient(new S3Client(EU_WEST_1));
+		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
 		var fileName = sys.FileSystem.fullPath("../CMakeLists.txt");
-		var bucketName = "lib.haxe.org";
+		var bucketName = S3BUCKET_NAME;
 		var keyName = "CMakeLists.txt";
 		var contentType = "application/octet-stream";
 		var r = client.uploadFile(fileName, bucketName, keyName, contentType);
