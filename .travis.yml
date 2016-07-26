@@ -18,9 +18,9 @@ install:
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
   - cmake --version
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      cmake .
+      cmake .;
     elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 .
+      cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 .;
     fi;
   - make
 
