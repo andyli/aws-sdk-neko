@@ -23,7 +23,6 @@ class Test extends TestCase {
 	function test_TransferClient_uploadFile():Void {
 		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
 		var fileName = sys.FileSystem.absolutePath("../CMakeLists.txt");
-		trace(fileName);
 		var bucketName = S3BUCKET_NAME;
 		var keyName = "CMakeLists.txt";
 		var contentType = "application/octet-stream";
