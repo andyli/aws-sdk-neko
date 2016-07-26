@@ -1,8 +1,5 @@
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
-#include <aws/s3/model/PutObjectRequest.h>
-#include <aws/s3/model/GetObjectRequest.h>
-#include <aws/core/utils/memory/stl/AwsStringStream.h>
 #include <aws/transfer/TransferClient.h>
 #include <aws/transfer/UploadFileRequest.h>
 
