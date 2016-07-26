@@ -1,0 +1,11 @@
+{
+	"name": "aws-sdk-neko",
+	"url" : "https://github.com/andyli/aws-sdk-neko",
+	"license": "MIT",
+	"tags": ["neko"],
+	"description": "Neko binding to the AWS C++ SDK.",
+	"version": "0.1.0",
+	"classPath": "src/",
+	"releasenote": "Initial API for uploading files to S3.",
+	"contributors": ["andyli"]
+}
