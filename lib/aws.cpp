@@ -12,14 +12,23 @@ using namespace Aws::S3;
 static const char* ALLOCATION_TAG = "aws-skd-neko";
 static Aws::SDKOptions options;
 
+static bool awsInited = false;
+static bool awsShutdowned = false;
+
 static value _InitAPI() {
-	Aws::InitAPI(options);
+	if (!awsInited) {
+		Aws::InitAPI(options);
+		awsInited = true;
+	}
 	return val_null;
 }
 DEFINE_PRIM(_InitAPI, 0);
 
 static value _ShutdownAPI() {
-	Aws::ShutdownAPI(options);
+	if (awsInited && !awsShutdowned) {
+		Aws::ShutdownAPI(options);
+		awsShutdowned = true;
+	}
 	return val_null;
 }
 DEFINE_PRIM(_ShutdownAPI, 0);
