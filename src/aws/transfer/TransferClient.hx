@@ -23,6 +23,6 @@ class TransferClient {
 		return r;
 	}
 
-	static var _new = Lib.load("aws", "new_TransferClient", 1);
-	static var TransferClient_UploadFile = Lib.load("aws", "TransferClient_UploadFile", 5);
+	static var _new = Lib.loadLazy("aws", "new_TransferClient", 1);
+	static var TransferClient_UploadFile = Lib.loadLazy("aws", "TransferClient_UploadFile", 5);
 }

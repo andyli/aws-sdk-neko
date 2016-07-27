@@ -16,6 +16,6 @@ class UploadFileRequest {
 		return UploadFileRequest_GetFailure(_handle);
 	}
 
-	static var UploadFileRequest_IsDone = Lib.load("aws", "UploadFileRequest_IsDone", 1);
-	static var UploadFileRequest_GetFailure = Lib.load("aws", "UploadFileRequest_GetFailure", 1);
+	static var UploadFileRequest_IsDone = Lib.loadLazy("aws", "UploadFileRequest_IsDone", 1);
+	static var UploadFileRequest_GetFailure = Lib.loadLazy("aws", "UploadFileRequest_GetFailure", 1);
 }

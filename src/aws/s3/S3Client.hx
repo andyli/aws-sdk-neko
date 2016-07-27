@@ -8,5 +8,5 @@ class S3Client {
 		_handle = _new(region.haxeToNeko());
 	}
 
-	static var _new = Lib.load("aws", "new_S3Client", 1);
+	static var _new = Lib.loadLazy("aws", "new_S3Client", 1);
 }

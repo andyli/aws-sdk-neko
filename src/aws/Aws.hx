@@ -10,6 +10,6 @@ class Aws {
 		_ShutdownAPI();
 	}
 
-	static var _InitAPI = Lib.load("aws", "_InitAPI", 0);
-	static var _ShutdownAPI = Lib.load("aws", "_ShutdownAPI", 0);
+	static var _InitAPI = Lib.loadLazy("aws", "_InitAPI", 0);
+	static var _ShutdownAPI = Lib.loadLazy("aws", "_ShutdownAPI", 0);
 }
