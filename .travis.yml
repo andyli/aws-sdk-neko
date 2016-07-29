@@ -1,4 +1,8 @@
-language: cpp
+language: haxe
+
+haxe:
+  - 3.2.1
+  - development
 
 os:
   - linux
@@ -8,19 +12,15 @@ sudo: required
 dist: trusty
 
 install:
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      sudo add-apt-repository ppa:haxe/releases -y &&
-      sudo apt-get update &&
-      sudo apt-get install haxe=1:3.2.1* neko-dev -y;
-    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      brew update && brew install haxe neko && brew upgrade cmake;
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
+      brew update && brew upgrade cmake;
     fi;
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
   - cmake --version
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      cmake .;
+      cmake -DNEKO_INCLUDE_DIRS=${NEKOPATH}/include/ -DNEKO_LIBRARIES=${NEKOPATH}/libneko.so;
     elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      cmake -DCMAKE_OSX_ARCHITECTURES=x86_64 .;
+      cmake -DNEKO_INCLUDE_DIRS=${NEKOPATH}/include/ -DNEKO_LIBRARIES=${NEKOPATH}/libneko.dylib -DCMAKE_OSX_ARCHITECTURES=x86_64;
     fi;
   - make
 

@@ -70,12 +70,17 @@ endif()
 
 find_package(aws-sdk-cpp)
 
+if (NOT (NEKO_INCLUDE_DIRS AND NEKO_LIBRARIES))
+	find_package(Neko REQUIRED)
+else()
+	if (NOT NEKO_EXECUTABLE)
+		set(NEKO_EXECUTABLE neko)
+	endif()
+endif()
+
 
 include_directories(
-	/usr/local/include
-)
-link_directories(
-	/usr/local/lib
+	${NEKO_INCLUDE_DIRS}
 )
 add_library(aws.ndll MODULE lib/aws.cpp)
 
@@ -86,10 +91,9 @@ set_target_properties(aws.ndll
 	SUFFIX .ndll
 )
 
-target_link_libraries(aws.ndll neko aws-cpp-sdk-s3 aws-cpp-sdk-transfer)
+target_link_libraries(aws.ndll ${NEKO_LIBRARIES} aws-cpp-sdk-s3 aws-cpp-sdk-transfer)
 
-set(HAXE haxe CACHE STRING "Haxe compiler")
-set(NEKO neko CACHE STRING "Neko VM")
+set(HAXE_EXECUTABLE haxe CACHE STRING "Haxe compiler")
 
 file(GLOB_RECURSE haxe_src_files
 	src/*.hx
@@ -98,7 +102,7 @@ file(GLOB_RECURSE haxe_src_files
 
 add_custom_command(
 	OUTPUT ${CMAKE_SOURCE_DIR}/bin/Test.n
-	COMMAND ${HAXE} ${CMAKE_SOURCE_DIR}/test.hxml
+	COMMAND ${HAXE_EXECUTABLE} ${CMAKE_SOURCE_DIR}/test.hxml
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	DEPENDS ${haxe_src_files} ${CMAKE_SOURCE_DIR}/test.hxml
 )
@@ -114,6 +118,6 @@ add_custom_target(Test.n ALL
 
 add_test(
 	NAME unittest
-	COMMAND ${NEKO} Test.n
+	COMMAND ${NEKO_EXECUTABLE} Test.n
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
 )
