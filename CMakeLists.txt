@@ -6,6 +6,10 @@ include(CTest)
 
 
 if (APPLE)
+	list(LENGTH CMAKE_OSX_ARCHITECTURES OSX_ARCHITECTURES_LEN)
+	if (NOT OSX_ARCHITECTURES_LEN EQUAL 1)
+		set (CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "CMAKE_OSX_ARCHITECTURES should be either i386 or x86_64" FORCE)
+	endif()
 	if ("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "i386")
 		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ndll/Mac)
 	elseif ("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64")
@@ -69,15 +73,26 @@ if (NOT EXISTS ${aws-sdk-cpp_DIR})
 endif()
 
 find_package(aws-sdk-cpp)
+find_package(Neko QUIET)
 
-if (NOT (NEKO_INCLUDE_DIRS AND NEKO_LIBRARIES))
-	find_package(Neko REQUIRED)
-else()
-	if (NOT NEKO_EXECUTABLE)
-		set(NEKO_EXECUTABLE neko)
-	endif()
+if (NOT NEKO_FOUND)
+	find_path(NEKO_INCLUDE_DIRS neko.h
+		HINTS $ENV{NEKOPATH}/include
+	)
+
+	find_library(NEKO_LIBRARIES NAMES neko
+		HINTS $ENV{NEKOPATH}
+	)
+
+	find_program(NEKO_EXECUTABLE neko
+		HINTS $ENV{NEKOPATH}
+	)
 endif()
 
+find_program(HAXE_EXECUTABLE haxe
+	HINTS $ENV{HAXEPATH}
+	DOC "Haxe compiler"
+)
 
 include_directories(
 	${NEKO_INCLUDE_DIRS}
@@ -92,8 +107,6 @@ set_target_properties(aws.ndll
 )
 
 target_link_libraries(aws.ndll ${NEKO_LIBRARIES} aws-cpp-sdk-s3 aws-cpp-sdk-transfer)
-
-set(HAXE_EXECUTABLE haxe CACHE STRING "Haxe compiler")
 
 file(GLOB_RECURSE haxe_src_files
 	src/*.hx

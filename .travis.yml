@@ -17,11 +17,7 @@ install:
     fi;
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
   - cmake --version
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-      cmake -DNEKO_INCLUDE_DIRS=${NEKOPATH}/include/ -DNEKO_LIBRARIES=${NEKOPATH}/libneko.so;
-    elif [ "${TRAVIS_OS_NAME}" = "osx" ]; then
-      cmake -DNEKO_INCLUDE_DIRS=${NEKOPATH}/include/ -DNEKO_LIBRARIES=${NEKOPATH}/libneko.dylib -DCMAKE_OSX_ARCHITECTURES=x86_64;
-    fi;
+  - cmake .
   - make
 
 script:
