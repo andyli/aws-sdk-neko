@@ -9,6 +9,8 @@ platform: Win32
 configuration: Release
 
 install:
+  # Checkout aws-sdk-cpp submodule
+  - git submodule update --init --recursive
   # Install Haxe and Neko
   - cinst haxe -version 3.2.1 -y
   - RefreshEnv
