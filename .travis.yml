@@ -17,7 +17,7 @@ install:
     fi;
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       sudo apt-get update;
-      sudo apt-get install uuid-dev;
+      sudo apt-get install uuid-dev -y;
     fi;
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
   - cmake --version
