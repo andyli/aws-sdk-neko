@@ -7,9 +7,6 @@ environment:
     - VisualStudioVersion: 12.0
       CMAKE_GENERATOR: "Visual Studio 12 2013"
 
-platform: Win32
-configuration: Release
-
 install:
   # Checkout aws-sdk-cpp submodule
   - git submodule update --init --recursive
@@ -24,7 +21,8 @@ build_script:
   - cmake -G "%CMAKE_GENERATOR%" .
   - cmake --build .
 
-test: off
+test_script:
+  - ctest -C Debug
 
 artifacts:
   - path: bin/*.ndll

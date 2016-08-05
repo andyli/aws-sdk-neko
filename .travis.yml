@@ -22,7 +22,7 @@ install:
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
   - cmake --version
   - cmake .
-  - make
+  - cmake --build .
 
 script:
-  - make test ARGS="-V"
+  - ctest -V
