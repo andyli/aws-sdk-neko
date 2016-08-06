@@ -16,6 +16,8 @@ install:
   # Setup haxelib
   - mkdir "%HAXELIB_ROOT%"
   - haxelib setup "%HAXELIB_ROOT%"
+  - haxelib install all --always
+  - haxelib list
 
 build_script:
   - cmake -G "%CMAKE_GENERATOR%" .

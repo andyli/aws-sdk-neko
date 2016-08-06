@@ -20,6 +20,8 @@ install:
       sudo apt-get install uuid-dev -y;
     fi;
   - mkdir ~/haxelib && haxelib setup ~/haxelib;
+  - haxelib install all --always
+  - haxelib list
   - cmake --version
   - cmake .
   - cmake --build .

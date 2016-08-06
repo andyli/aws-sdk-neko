@@ -1,5 +1,6 @@
 -main Test
 -cp src
 -cp test
+-lib datetime:3.0.2
 -neko bin/Test.n
 -debug
