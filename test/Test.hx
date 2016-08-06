@@ -1,6 +1,7 @@
 import haxe.unit.*;
 
 import sys.io.*;
+using StringTools;
 
 import aws.*;
 import aws.s3.*;
@@ -40,7 +41,7 @@ class Test extends TestCase {
 			var p = new Process("git", ["rev-parse", "--short", "HEAD"]);
 			var out = p.stdout.readAll().toString();
 			p.close();
-			out;
+			out.trim();
 		}
 		var date = {
 			var p = new Process("git", ["show", "-s", "--format=%ct", "HEAD"]);
@@ -55,7 +56,7 @@ class Test extends TestCase {
 				var p = new Process("file", [fileName]);
 				var out = p.stdout.readAll().toString();
 				p.close();
-				if (out.indexOf("x86_64") > -1)
+				if (out.indexOf("64-bit") > -1)
 					"64";
 				else
 					"";
@@ -77,7 +78,7 @@ class Test extends TestCase {
 		}
 		switch (r.getFailure()) {
 			case null:
-				Sys.println('uploaded ${fileName}');
+				Sys.println('uploaded ${fileName} to http://${bucketName}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com/${keyName}');
 			case f:
 				throw f;
 		}
