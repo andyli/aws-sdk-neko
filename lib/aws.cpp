@@ -206,3 +206,15 @@ static value DeleteObjectRequest_SetKey(value deleteObjectRequest, value val) {
 }
 DEFINE_PRIM(DeleteObjectRequest_SetKey, 2);
 
+static value S3Client_DeleteObject(value s3Client, value deleteObjectRequest) {
+	auto _s3Client = * (std::shared_ptr<S3Client>*) val_data(s3Client);
+	auto _deleteObjectRequest = * (std::shared_ptr<DeleteObjectRequest>*) val_data(deleteObjectRequest);
+	auto _deleteObjectOutcome = _s3Client->DeleteObject(*_deleteObjectRequest);
+	if (_deleteObjectOutcome.IsSuccess()) {
+		return val_null;
+	} else {
+		neko_error();
+		return val_null;
+	}
+}
+DEFINE_PRIM(S3Client_DeleteObject, 2);

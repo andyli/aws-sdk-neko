@@ -19,50 +19,6 @@ class Test extends TestCase {
 		case v: v;
 	};
 
-	function test_S3Client():Void {
-		var client = new S3Client(AWS_DEFAULT_REGION);
-		assertTrue(true);
-	}
-
-	function test_TransferClient_uploadFile():Void {
-		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
-		var fileName = FileSystem.absolutePath("../CMakeLists.txt");
-		var bucketName = S3BUCKET_NAME;
-		var keyName = "CMakeLists.txt";
-		var contentType = "application/octet-stream";
-		var r = client.uploadFile(fileName, bucketName, keyName, contentType);
-		assertTrue(r.waitUntilDone());
-		assertTrue(r.isDone());
-		assertEquals(null, r.getFailure());
-		assertTrue(r.completedSuccessfully());
-		assertEquals(FileSystem.stat(fileName).size, r.getFileSize());
-	}
-
-	function test_TransferClient_downloadFile():Void {
-		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
-		var fileName = FileSystem.absolutePath("CMakeLists2.txt");
-		var bucketName = S3BUCKET_NAME;
-		var keyName = "CMakeLists.txt";
-		var contentType = "application/octet-stream";
-		var r = client.downloadFile(fileName, bucketName, keyName);
-		assertTrue(r.waitUntilDone());
-		assertTrue(r.isDone());
-		assertEquals(null, r.getFailure());
-		assertTrue(r.completedSuccessfully());
-		assertEquals(FileSystem.stat(fileName).size, r.getFileSize());
-		assertTrue(FileSystem.exists(fileName));
-		FileSystem.deleteFile(fileName);
-	}
-
-	function test_DeleteObjectRequest():Void {
-		var req = new DeleteObjectRequest();
-		var bucketName = S3BUCKET_NAME;
-		var keyName = "CMakeLists.txt";
-		req.setBucket(bucketName);
-		req.setKey(keyName);
-		assertTrue(true);
-	}
-
 	static function uploadNdll():Void {
 		var fileName = FileSystem.absolutePath("../bin/aws.ndll");
 		var sha = {
@@ -114,7 +70,8 @@ class Test extends TestCase {
 
 	static function main():Void {
 		var runner = new TestRunner();
-		runner.add(new Test());
+		runner.add(new TestTransferClient());
+		runner.add(new TestS3Client_deleteObject());
 		Aws.initAPI();
 		var succeeded = runner.run();
 		if (!succeeded) {
