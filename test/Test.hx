@@ -1,5 +1,6 @@
 import haxe.unit.*;
 
+import sys.*;
 import sys.io.*;
 using StringTools;
 
@@ -24,19 +25,36 @@ class Test extends TestCase {
 
 	function test_TransferClient_uploadFile():Void {
 		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
-		var fileName = sys.FileSystem.absolutePath("../CMakeLists.txt");
+		var fileName = FileSystem.absolutePath("../CMakeLists.txt");
 		var bucketName = S3BUCKET_NAME;
 		var keyName = "CMakeLists.txt";
 		var contentType = "application/octet-stream";
 		var r = client.uploadFile(fileName, bucketName, keyName, contentType);
-		while (!r.isDone()) {
-			Sys.sleep(0.5);
-		}
+		assertTrue(r.waitUntilDone());
+		assertTrue(r.isDone());
 		assertEquals(null, r.getFailure());
+		assertTrue(r.completedSuccessfully());
+		assertEquals(FileSystem.stat(fileName).size, r.getFileSize());
+	}
+
+	function test_TransferClient_downloadFile():Void {
+		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
+		var fileName = FileSystem.absolutePath("CMakeLists2.txt");
+		var bucketName = S3BUCKET_NAME;
+		var keyName = "CMakeLists.txt";
+		var contentType = "application/octet-stream";
+		var r = client.downloadFile(fileName, bucketName, keyName);
+		assertTrue(r.waitUntilDone());
+		assertTrue(r.isDone());
+		assertEquals(null, r.getFailure());
+		assertTrue(r.completedSuccessfully());
+		assertEquals(FileSystem.stat(fileName).size, r.getFileSize());
+		assertTrue(FileSystem.exists(fileName));
+		FileSystem.deleteFile(fileName);
 	}
 
 	static function uploadNdll():Void {
-		var fileName = sys.FileSystem.absolutePath("../bin/aws.ndll");
+		var fileName = FileSystem.absolutePath("../bin/aws.ndll");
 		var sha = {
 			var p = new Process("git", ["rev-parse", "--short", "HEAD"]);
 			var out = p.stdout.readAll().toString();
@@ -93,7 +111,9 @@ class Test extends TestCase {
 			Aws.shutdownAPI();
 			Sys.exit(1);
 		} else {
+			#if !testing
 			uploadNdll();
+			#end
 			Aws.shutdownAPI();
 		}
 	}

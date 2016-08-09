@@ -123,6 +123,7 @@ add_custom_command(
 add_custom_command(
 	OUTPUT ${CMAKE_SOURCE_DIR}/bin/aws.ndll
 	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:aws.ndll> ${CMAKE_SOURCE_DIR}/bin/aws.ndll
+	DEPENDS aws.ndll
 )
 
 add_custom_target(Test.n ALL

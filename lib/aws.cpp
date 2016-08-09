@@ -77,28 +77,54 @@ static value new_TransferClient(value s3client) {
 DEFINE_PRIM(new_TransferClient, 1);
 
 
-// UploadFileRequest
+// S3FileRequest
 
-DEFINE_KIND(k_UploadFileRequest);
+DEFINE_KIND(k_S3FileRequest);
 
 static void free_UploadFileRequest(value uploadFileRequest) {
 	auto _UploadFileRequest = (std::shared_ptr<UploadFileRequest>*) val_data(uploadFileRequest);
 	Aws::Delete(_UploadFileRequest);
 }
 
-static value UploadFileRequest_IsDone(value uploadFileRequest) {
-	auto _uploadFileRequest = * (std::shared_ptr<UploadFileRequest>*) val_data(uploadFileRequest);
-	auto _IsDone = _uploadFileRequest->IsDone();
-	return alloc_bool(_IsDone);
+static void free_DownloadFileRequest(value downloadFileRequest) {
+	auto _DownloadFileRequest = (std::shared_ptr<DownloadFileRequest>*) val_data(downloadFileRequest);
+	Aws::Delete(_DownloadFileRequest);
 }
-DEFINE_PRIM(UploadFileRequest_IsDone, 1);
 
-static value UploadFileRequest_GetFailure(value uploadFileRequest) {
-	auto _uploadFileRequest = * (std::shared_ptr<UploadFileRequest>*) val_data(uploadFileRequest);
-	auto _failure = _uploadFileRequest->GetFailure();
-	return _failure.length() > 0 ? alloc_string(_failure.c_str()) : val_null;
+static value S3FileRequest_GetFileSize(value s3FileRequest) {
+	auto _s3FileRequest = * (std::shared_ptr<S3FileRequest>*) val_data(s3FileRequest);
+	auto _GetFileSize = _s3FileRequest->GetFileSize();
+	return alloc_int(_GetFileSize);
 }
-DEFINE_PRIM(UploadFileRequest_GetFailure, 1);
+DEFINE_PRIM(S3FileRequest_GetFileSize, 1);
+
+static value S3FileRequest_IsDone(value s3FileRequest) {
+	auto _s3FileRequest = * (std::shared_ptr<S3FileRequest>*) val_data(s3FileRequest);
+	auto _IsDone = _s3FileRequest->IsDone();
+	return alloc_int(_IsDone);
+}
+DEFINE_PRIM(S3FileRequest_IsDone, 1);
+
+static value S3FileRequest_CompletedSuccessfully(value s3FileRequest) {
+	auto _s3FileRequest = * (std::shared_ptr<S3FileRequest>*) val_data(s3FileRequest);
+	auto _CompletedSuccessfully = _s3FileRequest->CompletedSuccessfully();
+	return alloc_int(_CompletedSuccessfully);
+}
+DEFINE_PRIM(S3FileRequest_CompletedSuccessfully, 1);
+
+static value S3FileRequest_WaitUntilDone(value s3FileRequest) {
+	auto _s3FileRequest = * (std::shared_ptr<S3FileRequest>*) val_data(s3FileRequest);
+	auto _WaitUntilDone = _s3FileRequest->WaitUntilDone();
+	return alloc_int(_WaitUntilDone);
+}
+DEFINE_PRIM(S3FileRequest_WaitUntilDone, 1);
+
+static value S3FileRequest_GetFailure(value s3FileRequest) {
+	auto _uploadFileRequest = * (std::shared_ptr<S3FileRequest>*) val_data(s3FileRequest);
+	auto _failure = _uploadFileRequest->GetFailure();
+	return alloc_string(_failure.c_str());
+}
+DEFINE_PRIM(S3FileRequest_GetFailure, 1);
 
 static value TransferClient_UploadFile(
 	value transferClient,
@@ -118,8 +144,30 @@ static value TransferClient_UploadFile(
 		)
 	);
 
-	auto r = alloc_abstract(k_UploadFileRequest, _uploadFileRequest);
+	auto r = alloc_abstract(k_S3FileRequest, _uploadFileRequest);
 	val_gc(r, free_UploadFileRequest);
 	return r;
 }
 DEFINE_PRIM(TransferClient_UploadFile, 5);
+
+static value TransferClient_DownloadFile(
+	value transferClient,
+	value fileName,
+	value bucketName,
+	value keyName
+) {
+	auto _transferClient = * (std::shared_ptr<TransferClient>*) val_data(transferClient);
+	auto _downloadFileRequest = Aws::New<std::shared_ptr<DownloadFileRequest>>(
+		ALLOCATION_TAG,
+		_transferClient->DownloadFile(
+			val_string(fileName),
+			val_string(bucketName),
+			val_string(keyName)
+		)
+	);
+
+	auto r = alloc_abstract(k_S3FileRequest, _downloadFileRequest);
+	val_gc(r, free_DownloadFileRequest);
+	return r;
+}
+DEFINE_PRIM(TransferClient_DownloadFile, 4);
