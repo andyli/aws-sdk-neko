@@ -1,5 +1,6 @@
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
+#include <aws/s3/model/DeleteObjectRequest.h>
 #include <aws/transfer/TransferClient.h>
 #include <aws/transfer/UploadFileRequest.h>
 
@@ -8,6 +9,7 @@
 using namespace Aws::Client;
 using namespace Aws::Transfer;
 using namespace Aws::S3;
+using namespace Aws::S3::Model;
 
 static const char* ALLOCATION_TAG = "aws-skd-neko";
 static Aws::SDKOptions options;
@@ -171,3 +173,36 @@ static value TransferClient_DownloadFile(
 	return r;
 }
 DEFINE_PRIM(TransferClient_DownloadFile, 4);
+
+
+// DeleteObjectRequest
+
+DEFINE_KIND(k_DeleteObjectRequest);
+
+static void free_DeleteObjectRequest( value deleteObjectRequest ) {
+	auto _deleteObjectRequest = (std::shared_ptr<DeleteObjectRequest>*) val_data(deleteObjectRequest);
+	Aws::Delete(_deleteObjectRequest);
+}
+
+static value new_DeleteObjectRequest() {
+	auto r = Aws::New<std::shared_ptr<DeleteObjectRequest>>(ALLOCATION_TAG, Aws::New<DeleteObjectRequest>(ALLOCATION_TAG));
+	auto handle = alloc_abstract(k_DeleteObjectRequest, r);
+	val_gc(handle, free_DeleteObjectRequest);
+	return handle;
+}
+DEFINE_PRIM(new_DeleteObjectRequest, 0);
+
+static value DeleteObjectRequest_SetBucket(value deleteObjectRequest, value val) {
+	auto _deleteObjectRequest = * (std::shared_ptr<DeleteObjectRequest>*) val_data(deleteObjectRequest);
+	_deleteObjectRequest->SetBucket(val_string(val));
+	return val_null;
+}
+DEFINE_PRIM(DeleteObjectRequest_SetBucket, 2);
+
+static value DeleteObjectRequest_SetKey(value deleteObjectRequest, value val) {
+	auto _deleteObjectRequest = * (std::shared_ptr<DeleteObjectRequest>*) val_data(deleteObjectRequest);
+	_deleteObjectRequest->SetKey(val_string(val));
+	return val_null;
+}
+DEFINE_PRIM(DeleteObjectRequest_SetKey, 2);
+

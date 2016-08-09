@@ -4,7 +4,7 @@ using neko.Lib;
 
 @:allow(aws)
 class S3FileRequest {
-	public var _handle(default, null):Dynamic;
+	var _handle(default, null):Dynamic;
 
 	function new():Void {}
 

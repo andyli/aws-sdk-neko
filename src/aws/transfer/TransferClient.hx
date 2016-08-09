@@ -4,7 +4,7 @@ import aws.s3.*;
 using neko.Lib;
 
 class TransferClient {
-	public var _handle(default, null):Dynamic;
+	var _handle(default, null):Dynamic;
 
 	public function new(s3client:S3Client):Void {
 		_handle = _new(s3client._handle);

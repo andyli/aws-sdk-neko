@@ -6,6 +6,7 @@ using StringTools;
 
 import aws.*;
 import aws.s3.*;
+import aws.s3.model.*;
 import aws.transfer.*;
 
 class Test extends TestCase {
@@ -51,6 +52,15 @@ class Test extends TestCase {
 		assertEquals(FileSystem.stat(fileName).size, r.getFileSize());
 		assertTrue(FileSystem.exists(fileName));
 		FileSystem.deleteFile(fileName);
+	}
+
+	function test_DeleteObjectRequest():Void {
+		var req = new DeleteObjectRequest();
+		var bucketName = S3BUCKET_NAME;
+		var keyName = "CMakeLists.txt";
+		req.setBucket(bucketName);
+		req.setKey(keyName);
+		assertTrue(true);
 	}
 
 	static function uploadNdll():Void {
