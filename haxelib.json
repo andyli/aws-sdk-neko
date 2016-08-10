@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"tags": ["neko"],
 	"description": "Neko binding to the AWS C++ SDK.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"classPath": "src/",
-	"releasenote": "Initial API for uploading files to S3.",
+	"releasenote": "Added API for downloading and deleting S3 files. Added Windows ndll.",
 	"contributors": ["andyli"]
 }
