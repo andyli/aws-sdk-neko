@@ -47,7 +47,7 @@ static void free_S3Client( value s3client ) {
 static value new_S3Client(value region) {
 	ClientConfiguration clientConfig;
 	clientConfig.followRedirects = true;
-	clientConfig.region = Aws::RegionMapper::GetRegionFromName(val_string(region));
+	clientConfig.region = val_string(region);
 	clientConfig.connectTimeoutMs = 5000;
 	clientConfig.requestTimeoutMs = 6000;
 
