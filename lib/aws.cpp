@@ -44,9 +44,10 @@ static void free_S3Client( value s3client ) {
 	Aws::Delete(_s3client);
 }
 
-static value new_S3Client(value region) {
+static value new_S3Client(value region, value endpoint) {
 	ClientConfiguration clientConfig;
 	clientConfig.followRedirects = true;
+	clientConfig.endpointOverride = val_string(endpoint);
 	clientConfig.region = val_string(region);
 	clientConfig.connectTimeoutMs = 5000;
 	clientConfig.requestTimeoutMs = 6000;
@@ -56,7 +57,7 @@ static value new_S3Client(value region) {
 	val_gc(handle, free_S3Client);
 	return handle;
 }
-DEFINE_PRIM(new_S3Client, 1);
+DEFINE_PRIM(new_S3Client, 2);
 
 
 // TransferClient
