@@ -27,4 +27,4 @@ install:
   - cmake --build .
 
 script:
-  - ctest -V
+  - if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ] then ctest -V; fi
