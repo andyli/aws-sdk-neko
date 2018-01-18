@@ -2,6 +2,7 @@ language: haxe
 
 haxe:
   - 3.2.1
+  - 3.4.4
   - development
 
 os:
@@ -27,4 +28,4 @@ install:
   - cmake --build .
 
 script:
-  - if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ] then ctest -V; fi
+  - if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ]; then ctest -V; fi
