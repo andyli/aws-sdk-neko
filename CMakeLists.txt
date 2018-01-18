@@ -73,21 +73,18 @@ if (NOT EXISTS ${aws-sdk-cpp_DIR})
 endif()
 
 find_package(aws-sdk-cpp)
-find_package(Neko QUIET)
 
-if (NOT NEKO_FOUND)
-	find_path(NEKO_INCLUDE_DIRS neko.h
-		HINTS $ENV{NEKOPATH}/include
-	)
+find_path(NEKO_INCLUDE_DIRS neko.h
+	HINTS $ENV{NEKOPATH}/include
+)
 
-	find_library(NEKO_LIBRARIES NAMES neko
-		HINTS $ENV{NEKOPATH}
-	)
+find_library(NEKO_LIBRARIES NAMES neko
+	HINTS $ENV{NEKOPATH}
+)
 
-	find_program(NEKO_EXECUTABLE neko
-		HINTS $ENV{NEKOPATH}
-	)
-endif()
+find_program(NEKO_EXECUTABLE neko
+	HINTS $ENV{NEKOPATH}
+)
 
 find_program(HAXE_EXECUTABLE haxe
 	HINTS $ENV{HAXEPATH}
