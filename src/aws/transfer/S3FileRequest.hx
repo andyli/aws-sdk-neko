@@ -6,7 +6,7 @@ using neko.Lib;
 class S3FileRequest {
 	var _handle(default, null):Dynamic;
 
-	function new():Void {}
+	public function new():Void {}
 
 	public function isDone():Bool {
 		return S3FileRequest_IsDone(_handle) > 0;
