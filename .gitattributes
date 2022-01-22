@@ -4,3 +4,5 @@ appveyor.yml export-ignore
 aws-sdk-cpp export-ignore
 test.hxml export-ignore
 test export-ignore
+
+* text=auto eol=lf
