@@ -2,6 +2,7 @@ bin
 ndll
 aws-sdk-cpp-build
 .haxelib
+.envrc
 
 ##################################
 # CMake
