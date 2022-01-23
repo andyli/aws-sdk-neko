@@ -41,8 +41,8 @@ devcontainer-base:
 
     # Configure apt and install packages
     RUN apt-get update \
-        && apt-get install -y --no-install-recommends apt-utils dialog 2>&1 \
-        && apt-get install -y \
+        && apt-get install -qqy --no-install-recommends apt-utils dialog 2>&1 \
+        && apt-get install -qqy --no-install-recommends \
             iproute2 \
             procps \
             sudo \
@@ -61,8 +61,12 @@ devcontainer-base:
             zlib1g-dev \
             # install docker engine for using `WITH DOCKER`
             docker-ce \
+        # install haxe
         && add-apt-repository ppa:haxe/haxe4.2 \
-        && apt-get install -y neko neko-dev haxe=1:4.2.* \
+        && apt-get install -qqy --no-install-recommends neko neko-dev haxe=1:4.2.* \
+        # install a recent git
+        && add-apt-repository ppa:git-core/ppa \
+        && apt-get install -qqy --no-install-recommends git \
         #
         # Clean up
         && apt-get autoremove -y \
