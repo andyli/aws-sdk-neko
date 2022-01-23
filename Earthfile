@@ -171,6 +171,18 @@ build:
     RUN cmake --build .
     SAVE ARTIFACT bin
 
+package:
+    COPY lib lib
+    COPY src src
+    COPY CMakeLists.txt haxelib.json README.md .
+    COPY --platform=linux/amd64 +build/bin/aws.ndll ndll/Linux64/aws.ndll
+    SAVE ARTIFACT *
+
+package-zip:
+    FROM +package
+    RUN zip -r aws-sdk-neko.zip *
+    SAVE ARTIFACT aws-sdk-neko.zip AS LOCAL bin/aws-sdk-neko.zip
+
 ghcr-login:
     LOCALLY
     RUN echo "$GITHUB_CR_PAT" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
