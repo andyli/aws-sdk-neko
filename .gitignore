@@ -1,6 +1,7 @@
 bin
 ndll
 aws-sdk-cpp-build
+.haxelib
 
 ##################################
 # CMake

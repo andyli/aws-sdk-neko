@@ -11,6 +11,7 @@
 		"ms-azuretools.vscode-docker",
 		"nadako.vshaxe",
 		"earthly.earthfile-syntax-highlighting",
+		"twxs.cmake",
 	],
 	"remoteUser": "vscode"
 }

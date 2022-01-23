@@ -48,15 +48,21 @@ devcontainer-base:
             sudo \
             bash-completion \
             build-essential \
+            cmake \
             curl \
             wget \
             software-properties-common \
             direnv \
             tzdata \
-            # install docker engine for running +ci target
+            # build deps
+            uuid-dev \
+            libcurl4-gnutls-dev \
+            libssl1.0-dev \
+            zlib1g-dev \
+            # install docker engine for using `WITH DOCKER`
             docker-ce \
         && add-apt-repository ppa:haxe/haxe4.2 \
-        && apt-get install -y neko haxe=1:4.2.* \
+        && apt-get install -y neko neko-dev haxe=1:4.2.* \
         #
         # Clean up
         && apt-get autoremove -y \
