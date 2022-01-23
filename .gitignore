@@ -3,6 +3,7 @@ ndll
 aws-sdk-cpp-build
 .haxelib
 .envrc
+.tmp-earthly-out*
 
 ##################################
 # CMake
