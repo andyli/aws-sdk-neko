@@ -159,3 +159,7 @@ build:
     RUN cmake .
     RUN cmake --build .
     SAVE ARTIFACT bin
+
+ghcr-login:
+    LOCALLY
+    RUN echo "$GITHUB_CR_PAT" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
