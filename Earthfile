@@ -146,3 +146,16 @@ devcontainer:
     ARG IMAGE_TAG="master"
     ARG IMAGE_CACHE="$IMAGE_NAME:$IMAGE_TAG"
     SAVE IMAGE --cache-from="$IMAGE_CACHE" --push "$IMAGE_NAME:$IMAGE_TAG"
+
+build:
+    FROM +devcontainer
+    COPY *.hxml .
+    RUN haxelib newrepo && haxelib install all --always
+    COPY aws-sdk-cpp aws-sdk-cpp
+    COPY src src
+    COPY test test
+    COPY lib lib
+    COPY CMakeLists.txt .
+    RUN cmake .
+    RUN cmake --build .
+    SAVE ARTIFACT bin
