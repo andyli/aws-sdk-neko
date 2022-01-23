@@ -35,7 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build devcontainer
-        run: earthly +devcontainer --IMAGE_TAG="${{ github.ref_name }}" --GIT_SHA="${{ github.sha }}"
+        run: earthly +ci-devcontainer --GIT_REF_NAME="${{ github.ref_name }}" --GIT_SHA="${{ github.sha }}"
         env:
           EARTHLY_PUSH: "${{ github.repository_owner == 'andyli' && github.event_name == 'push' }}"
       - name: Build

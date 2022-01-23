@@ -131,8 +131,9 @@ devcontainer:
 
     USER $USERNAME
 
-    # config haxelib for $USERNAME
-    RUN haxelib setup ~/haxelib
+    # install haxelibs
+    COPY +haxelibs/.haxelib .haxelib
+    VOLUME "$WORKDIR/.haxelib"
 
     # Config direnv
     COPY --chown=$USER_UID:$USER_GID .devcontainer/direnv.toml /home/$USERNAME/.config/direnv/config.toml
@@ -151,15 +152,21 @@ devcontainer:
     ARG IMAGE_CACHE="$IMAGE_NAME:$IMAGE_TAG"
     SAVE IMAGE --cache-from="$IMAGE_CACHE" --push "$IMAGE_NAME:$IMAGE_TAG"
 
-build:
-    FROM +devcontainer
+haxelibs:
+    FROM +devcontainer-base
+    USER $USERNAME
     COPY *.hxml .
     RUN haxelib newrepo && haxelib install all --always
+    SAVE ARTIFACT .haxelib
+
+build:
+    FROM +devcontainer
+    COPY +haxelibs/.haxelib .haxelib
     COPY aws-sdk-cpp aws-sdk-cpp
     COPY src src
     COPY test test
     COPY lib lib
-    COPY CMakeLists.txt .
+    COPY CMakeLists.txt *.hxml .
     RUN cmake .
     RUN cmake --build .
     SAVE ARTIFACT bin
@@ -167,3 +174,11 @@ build:
 ghcr-login:
     LOCALLY
     RUN echo "$GITHUB_CR_PAT" | docker login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
+
+ci-devcontainer:
+    ARG --required GIT_SHA
+    ARG --required GIT_REF_NAME
+    BUILD +devcontainer \
+        --GIT_SHA="$GIT_SHA" \
+        --IMAGE_TAG="master" \
+        --IMAGE_TAG="$GIT_REF_NAME"
