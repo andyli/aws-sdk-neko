@@ -180,5 +180,5 @@ ci-devcontainer:
     ARG --required GIT_REF_NAME
     BUILD +devcontainer \
         --GIT_SHA="$GIT_SHA" \
-        --IMAGE_TAG="master" \
+        --IMAGE_TAG="$GIT_SHA" \
         --IMAGE_TAG="$GIT_REF_NAME"
