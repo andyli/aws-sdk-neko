@@ -169,13 +169,13 @@ build:
     COPY CMakeLists.txt *.hxml .
     RUN cmake .
     RUN cmake --build .
-    SAVE ARTIFACT bin
+    SAVE ARTIFACT bin/*
 
 package:
     COPY lib lib
     COPY src src
     COPY CMakeLists.txt haxelib.json README.md .
-    COPY --platform=linux/amd64 +build/bin/aws.ndll ndll/Linux64/aws.ndll
+    COPY --platform=linux/amd64 +build/aws.ndll ndll/Linux64/aws.ndll
     SAVE ARTIFACT *
 
 package-zip:
