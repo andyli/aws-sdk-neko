@@ -44,3 +44,23 @@ jobs:
         with:
           name: ndll-Linux64
           path: bin/aws.ndll
+  build-Windows64:
+    runs-on: windows-2016
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: choco install neko --version 2.3.0 --no-progress -y
+      - run: choco install haxe --version 4.2.4 --no-progress -y
+      - name: Prepend Chocolatey path
+        run: echo "C:\ProgramData\chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Set NEKOPATH
+        run: echo "NEKOPATH=C:\ProgramData\chocolatey\lib\neko\neko-2.3.0-win64" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - run: haxelib newrepo
+      - run: haxelib install all --always
+      - run: cmake -G "Visual Studio 15 2017 Win64" .
+      - run: cmake --build .
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ndll-Windows64
+          path: bin/aws.ndll
