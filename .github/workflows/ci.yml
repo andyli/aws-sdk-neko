@@ -5,7 +5,6 @@ on:
   workflow_dispatch:
 
 env:
-  EARTHLY_BUILDKIT_HOST: tcp://earthly:8372
   EARTHLY_USE_INLINE_CACHE: "true"
   EARTHLY_SAVE_INLINE_CACHE: "true"
   FORCE_COLOR: 1
@@ -39,7 +38,7 @@ jobs:
   build-Windows64:
     runs-on: windows-2016
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - run: choco install neko --version 2.3.0 --no-progress -y
