@@ -16,7 +16,7 @@ jobs:
     container: ghcr.io/andyli/aws_sdk_neko_devcontainer:master
     services:
       earthly:
-        image: earthly/buildkitd:v0.6.4
+        image: earthly/buildkitd:v0.6.15
         options: --privileged
         env:
           BUILDKIT_TCP_TRANSPORT_ENABLED: "true"
