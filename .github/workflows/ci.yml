@@ -13,21 +13,13 @@ env:
 jobs:
   build-Linux64:
     runs-on: ubuntu-latest
-    container: ghcr.io/andyli/aws_sdk_neko_devcontainer:master
-    services:
-      earthly:
-        image: earthly/buildkitd:v0.6.15
-        options: --privileged
-        env:
-          BUILDKIT_TCP_TRANSPORT_ENABLED: "true"
-        ports:
-          - 8372
-        volumes:
-          - /tmp/earthly
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - uses: earthly/actions-setup@v1
+        with:
+          version: "v0.6.15"
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
