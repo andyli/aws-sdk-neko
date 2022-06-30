@@ -3,6 +3,7 @@ ARG UBUNTU_RELEASE=bionic
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-$UBUNTU_RELEASE
 
 ARG DEVCONTAINER_IMAGE_NAME_DEFAULT=ghcr.io/andyli/aws_sdk_neko_devcontainer
+ARG PACKAGEZIP_IMAGE_NAME_DEFAULT=ghcr.io/andyli/aws_sdk_neko_zip
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -182,6 +183,10 @@ package-zip:
     FROM +package
     RUN zip -r aws-sdk-neko.zip *
     SAVE ARTIFACT aws-sdk-neko.zip AS LOCAL bin/aws-sdk-neko.zip
+    ARG IMAGE_NAME="$PACKAGEZIP_IMAGE_NAME_DEFAULT"
+    ARG IMAGE_TAG="master"
+    ARG IMAGE_CACHE="$IMAGE_NAME:$IMAGE_TAG"
+    SAVE IMAGE --cache-from="$IMAGE_CACHE" --push "$IMAGE_NAME:$IMAGE_TAG"
 
 ghcr-login:
     LOCALLY
@@ -192,5 +197,12 @@ ci-devcontainer:
     ARG --required GIT_REF_NAME
     BUILD +devcontainer \
         --GIT_SHA="$GIT_SHA" \
+        --IMAGE_TAG="$GIT_SHA" \
+        --IMAGE_TAG="$GIT_REF_NAME"
+
+ci-package-zip:
+    ARG --required GIT_SHA
+    ARG --required GIT_REF_NAME
+    BUILD +package-zip \
         --IMAGE_TAG="$GIT_SHA" \
         --IMAGE_TAG="$GIT_REF_NAME"
