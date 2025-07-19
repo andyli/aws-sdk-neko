@@ -53,14 +53,12 @@ class Test extends TestCase {
 		}
 		var keyName = 'artifacts/${dateString}_${sha}/ndll/${platform}/aws.ndll';
 
-		var client = new TransferClient(new S3Client(AWS_DEFAULT_REGION));
+		var client = new TransferManager(new S3Client(AWS_DEFAULT_REGION));
 		var bucketName = S3BUCKET_NAME;
 		var contentType = "application/octet-stream";
 		var r = client.uploadFile(fileName, bucketName, keyName, contentType);
-		while (!r.isDone()) {
-			Sys.sleep(0.5);
-		}
-		switch (r.getFailure()) {
+		r.waitUntilFinished();
+		switch (r.getLastErrorMessage()) {
 			case null:
 				Sys.println('uploaded ${fileName} to http://${bucketName}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com/${keyName}');
 			case f:
@@ -70,7 +68,7 @@ class Test extends TestCase {
 
 	static function main():Void {
 		var runner = new TestRunner();
-		runner.add(new TestTransferClient());
+		runner.add(new TestTransferManager());
 		runner.add(new TestS3Client_deleteObject());
 		Aws.initAPI();
 		var succeeded = runner.run();

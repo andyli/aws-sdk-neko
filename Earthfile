@@ -1,5 +1,5 @@
 VERSION 0.6
-ARG UBUNTU_RELEASE=bionic
+ARG UBUNTU_RELEASE=jammy
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-$UBUNTU_RELEASE
 
 ARG DEVCONTAINER_IMAGE_NAME_DEFAULT=ghcr.io/andyli/aws_sdk_neko_devcontainer
@@ -58,7 +58,7 @@ devcontainer-base:
             # build deps
             uuid-dev \
             libcurl4-gnutls-dev \
-            libssl1.0-dev \
+            libssl-dev \
             zlib1g-dev \
             # install docker engine for using `WITH DOCKER`
             docker-ce \
