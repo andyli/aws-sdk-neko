@@ -11,7 +11,7 @@ using namespace Aws::Transfer;
 using namespace Aws::S3;
 using namespace Aws::S3::Model;
 
-static const char* ALLOCATION_TAG = "aws-skd-neko";
+static const char* ALLOCATION_TAG = "aws-sdk-neko";
 static Aws::SDKOptions options;
 
 static bool awsInited = false;
