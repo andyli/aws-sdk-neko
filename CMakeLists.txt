@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 
 project(aws CXX)
 
@@ -50,10 +50,11 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 
-set(aws-sdk-cpp_DIR ${CMAKE_BINARY_DIR}/aws-sdk-cpp-build)
+set(AWS_SDK_BUILD_DIR ${CMAKE_BINARY_DIR}/aws-sdk-cpp-build)
+set(AWS_SDK_INSTALL_DIR ${AWS_SDK_BUILD_DIR}/prefix)
 
-if (NOT EXISTS ${aws-sdk-cpp_DIR})
-	file(MAKE_DIRECTORY ${aws-sdk-cpp_DIR})
+if (NOT EXISTS ${AWS_SDK_BUILD_DIR})
+	file(MAKE_DIRECTORY ${AWS_SDK_BUILD_DIR})
 	execute_process(
 		COMMAND ${CMAKE_COMMAND}
 			-G ${CMAKE_GENERATOR}
@@ -63,16 +64,20 @@ if (NOT EXISTS ${aws-sdk-cpp_DIR})
 			-DFORCE_SHARED_CRT=ON
 			-DENABLE_TESTING=OFF
 			"-DBUILD_ONLY=s3;transfer"
+			-DCMAKE_CXX_FLAGS=-fPIC
+			-DCMAKE_INSTALL_PREFIX=${AWS_SDK_INSTALL_DIR}
 			${CMAKE_SOURCE_DIR}/aws-sdk-cpp
-		WORKING_DIRECTORY ${aws-sdk-cpp_DIR}
+		WORKING_DIRECTORY ${AWS_SDK_BUILD_DIR}
 	)
 	execute_process(
-		COMMAND ${CMAKE_COMMAND} --build .
-		WORKING_DIRECTORY ${aws-sdk-cpp_DIR}
+		COMMAND ${CMAKE_COMMAND} --build . --target install
+		WORKING_DIRECTORY ${AWS_SDK_BUILD_DIR}
 	)
 endif()
 
-find_package(aws-sdk-cpp)
+list(APPEND CMAKE_PREFIX_PATH ${AWS_SDK_INSTALL_DIR})
+find_package(ZLIB REQUIRED)
+find_package(AWSSDK REQUIRED COMPONENTS s3 transfer)
 
 find_path(NEKO_INCLUDE_DIRS neko.h
 	HINTS $ENV{NEKOPATH}/include
