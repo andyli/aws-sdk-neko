@@ -13,14 +13,14 @@ jobs:
   build-Linux64:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - uses: earthly/actions-setup@v1
         with:
           version: "v0.6.15"
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -35,14 +35,14 @@ jobs:
         run: earthly +ci-package-zip --GIT_REF_NAME="${{ github.ref_name }}" --GIT_SHA="${{ github.sha }}"
         env:
           EARTHLY_PUSH: "${{ github.repository_owner == 'andyli' && github.event_name == 'push' }}"
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: ndll-Linux64
           path: bin/aws.ndll
   build-Windows64:
-    runs-on: windows-2016
+    runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - run: choco install neko --version 2.3.0 --no-progress -y
@@ -53,9 +53,9 @@ jobs:
         run: echo "NEKOPATH=C:\ProgramData\chocolatey\lib\neko\neko-2.3.0-win64" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - run: haxelib newrepo
       - run: haxelib install all --always
-      - run: cmake -G "Visual Studio 15 2017 Win64" .
+      - run: cmake -G "Visual Studio 17 2022" -A x64 .
       - run: cmake --build .
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: ndll-Windows64
           path: bin/aws.ndll
