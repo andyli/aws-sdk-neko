@@ -35,7 +35,7 @@ devcontainer-base:
         # Clean up
         && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
-    # Setting the ENTRYPOINT to docker-init.sh will configure non-root access 
+    # Setting the ENTRYPOINT to docker-init.sh will configure non-root access
     # to the Docker socket. The script will also execute CMD as needed.
     ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
     CMD [ "sleep", "infinity" ]
@@ -163,6 +163,8 @@ haxelibs:
 build:
     FROM +devcontainer
     COPY +haxelibs/.haxelib .haxelib
+    # required for aws-sdk submodule check:
+    COPY .git .git
     COPY aws-sdk-cpp aws-sdk-cpp
     COPY src src
     COPY test test
