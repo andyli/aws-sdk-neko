@@ -44,20 +44,27 @@ static void free_S3Client( value s3client ) {
 	Aws::Delete(_s3client);
 }
 
-static value new_S3Client(value region, value endpoint) {
+static value new_S3Client(value region, value endpoint, value useVirtualAddressing) {
 	ClientConfiguration clientConfig;
 	clientConfig.followRedirects = FollowRedirectsPolicy::ALWAYS;
-	clientConfig.endpointOverride = val_string(endpoint);
+	if (!val_is_null(endpoint))
+		clientConfig.endpointOverride = val_string(endpoint);
 	clientConfig.region = val_string(region);
 	clientConfig.connectTimeoutMs = 5000;
 	clientConfig.requestTimeoutMs = 6000;
 
-	auto c = Aws::New<std::shared_ptr<S3Client>>(ALLOCATION_TAG, Aws::New<S3Client>(ALLOCATION_TAG, clientConfig));
+	S3ClientConfiguration s3ClientConfig(
+		clientConfig,
+		Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never,
+		val_bool(useVirtualAddressing)
+	);
+
+	auto c = Aws::New<std::shared_ptr<S3Client>>(ALLOCATION_TAG, Aws::New<S3Client>(ALLOCATION_TAG, s3ClientConfig));
 	auto handle = alloc_abstract(k_S3Client, c);
 	val_gc(handle, free_S3Client);
 	return handle;
 }
-DEFINE_PRIM(new_S3Client, 2);
+DEFINE_PRIM(new_S3Client, 3);
 
 
 // TransferManager

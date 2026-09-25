@@ -25,7 +25,7 @@ class TestS3Client_deleteObject extends Test {
 		var keyName = "CMakeLists.txt";
 		req.setBucket(bucketName);
 		req.setKey(keyName);
-		var client = new S3Client(AWS_DEFAULT_REGION);
+		var client = createS3Client();
 		client.deleteObject(req);
 		assertTrue(true);
 	}
@@ -36,7 +36,7 @@ class TestS3Client_deleteObject extends Test {
 		var keyName = "asdgsag";
 		req.setBucket(bucketName);
 		req.setKey(keyName);
-		var client = new S3Client(AWS_DEFAULT_REGION);
+		var client = createS3Client();
 		var error = try {
 			client.deleteObject(req);
 			null;

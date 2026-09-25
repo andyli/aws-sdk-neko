@@ -18,6 +18,19 @@ class Test extends TestCase {
 		case null, "": throw 'S3BUCKET_NAME is not set';
 		case v: v;
 	};
+	/**
+		Endpoint of a local S3-compatible service, e.g. "http://localhost:9090".
+		When it is not set, the real AWS S3 service will be used.
+	**/
+	static public var S3_ENDPOINT = switch (Sys.getEnv("S3_ENDPOINT")) {
+		case null, "": null;
+		case v: v;
+	};
+
+	static public function createS3Client():S3Client {
+		// local S3-compatible services usually only support path-style addressing
+		return new S3Client(AWS_DEFAULT_REGION, S3_ENDPOINT, S3_ENDPOINT == null);
+	}
 
 	static function uploadNdll():Void {
 		var fileName = FileSystem.absolutePath("../bin/aws.ndll");
@@ -40,7 +53,9 @@ class Test extends TestCase {
 				var p = new Process("file", [fileName]);
 				var out = p.stdout.readAll().toString();
 				p.close();
-				if (out.indexOf("64-bit") > -1)
+				if (out.indexOf("aarch64") > -1 || out.indexOf("arm64") > -1)
+					"Arm64";
+				else if (out.indexOf("64-bit") > -1)
 					"64";
 				else
 					"";
@@ -53,7 +68,7 @@ class Test extends TestCase {
 		}
 		var keyName = 'artifacts/${dateString}_${sha}/ndll/${platform}/aws.ndll';
 
-		var client = new TransferManager(new S3Client(AWS_DEFAULT_REGION));
+		var client = new TransferManager(createS3Client());
 		var bucketName = S3BUCKET_NAME;
 		var contentType = "application/octet-stream";
 		var r = client.uploadFile(fileName, bucketName, keyName, contentType);
@@ -77,7 +92,9 @@ class Test extends TestCase {
 			Sys.exit(1);
 		} else {
 			#if !testing
-			uploadNdll();
+			// only upload the ndll when testing against the real AWS S3 service
+			if (S3_ENDPOINT == null)
+				uploadNdll();
 			#end
 			Aws.shutdownAPI();
 		}

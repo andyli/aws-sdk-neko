@@ -190,7 +190,37 @@ package:
     COPY src src
     COPY CMakeLists.txt haxelib.json README.md .
     COPY --platform=linux/amd64 +build/aws.ndll ndll/Linux64/aws.ndll
+    # COPY --platform=linux/arm64 +build/aws.ndll ndll/LinuxArm64/aws.ndll
     SAVE ARTIFACT *
+
+test.n:
+    FROM +devcontainer-base
+    COPY +haxelibs/.haxelib .haxelib
+    COPY src src
+    COPY test test
+    COPY test.hxml .
+    RUN haxe test.hxml
+    SAVE ARTIFACT bin/Test.n
+
+# Run the tests against a local S3-compatible service (S3Mock).
+test:
+    FROM +devcontainer
+    # used as the test fixture file
+    COPY CMakeLists.txt .
+    COPY +build/aws.ndll +test.n/Test.n bin/
+    ARG S3MOCK_IMAGE=adobe/s3mock:5.2.3
+    ENV AWS_DEFAULT_REGION=us-east-1
+    ENV AWS_ACCESS_KEY_ID=test
+    ENV AWS_SECRET_ACCESS_KEY=test
+    ENV S3BUCKET_NAME=aws-sdk-neko-test
+    ENV S3_ENDPOINT=http://localhost:9090
+    WORKDIR "$WORKDIR/bin"
+    WITH DOCKER --pull "$S3MOCK_IMAGE"
+        RUN docker run -d --name s3mock -p 9090:9090 "$S3MOCK_IMAGE" \
+            && timeout 60 sh -c 'until curl -s -o /dev/null "$S3_ENDPOINT"; do sleep 1; done' \
+            && aws --endpoint-url "$S3_ENDPOINT" s3api create-bucket --bucket "$S3BUCKET_NAME" \
+            && (neko Test.n || (docker logs s3mock; false))
+    END
 
 package-zip:
     FROM +package
