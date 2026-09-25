@@ -159,10 +159,14 @@ devcontainer:
 
     ARG GIT_SHA
     ENV GIT_SHA="$GIT_SHA"
+    # The image of each arch is pushed to its own tag, e.g. master-amd64 and master-arm64,
+    # since they are built on separate machines to avoid emulation.
+    # CI merges them into a multi-arch image tagged without the arch suffix.
+    ARG TARGETARCH
     ARG IMAGE_NAME="$DEVCONTAINER_IMAGE_NAME_DEFAULT"
     ARG IMAGE_TAG="master"
-    ARG IMAGE_CACHE="$IMAGE_NAME:$IMAGE_TAG"
-    SAVE IMAGE --cache-from="$IMAGE_CACHE" --push "$IMAGE_NAME:$IMAGE_TAG"
+    ARG IMAGE_CACHE="$IMAGE_NAME:$IMAGE_TAG-$TARGETARCH"
+    SAVE IMAGE --cache-from="$IMAGE_CACHE" --cache-from="$IMAGE_NAME:master-$TARGETARCH" --push "$IMAGE_NAME:$IMAGE_TAG-$TARGETARCH"
 
 haxelibs:
     FROM +devcontainer-base
@@ -185,12 +189,21 @@ build:
     RUN cmake --build .
     SAVE ARTIFACT bin/*
 
+ndll-Linux64:
+    COPY --platform=linux/amd64 +build/aws.ndll ndll/Linux64/aws.ndll
+    SAVE ARTIFACT ndll/Linux64/aws.ndll AS LOCAL bin/ndll/Linux64/aws.ndll
+
+ndll-LinuxArm64:
+    COPY --platform=linux/arm64 +build/aws.ndll ndll/LinuxArm64/aws.ndll
+    SAVE ARTIFACT ndll/LinuxArm64/aws.ndll AS LOCAL bin/ndll/LinuxArm64/aws.ndll
+
+# Gather all the artifacts for haxelib distribution.
+# It will not build the ndlls by itself, but will copy them from `./bin/ndll`.
 package:
     COPY lib lib
     COPY src src
     COPY CMakeLists.txt haxelib.json README.md .
-    COPY --platform=linux/amd64 +build/aws.ndll ndll/Linux64/aws.ndll
-    # COPY --platform=linux/arm64 +build/aws.ndll ndll/LinuxArm64/aws.ndll
+    COPY bin/ndll ndll
     SAVE ARTIFACT *
 
 test.n:
