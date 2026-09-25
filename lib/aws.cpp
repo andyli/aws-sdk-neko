@@ -160,9 +160,9 @@ static value TransferManager_DownloadFile(
 	auto _downloadFileRequest = Aws::New<std::shared_ptr<TransferHandle>>(
 		ALLOCATION_TAG,
 		_transferManager->DownloadFile(
-			val_string(fileName),
 			val_string(bucketName),
-			val_string(keyName)
+			val_string(keyName),
+			val_string(fileName)
 		)
 	);
 
