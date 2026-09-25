@@ -76,7 +76,9 @@ if (NOT EXISTS ${AWS_SDK_BUILD_DIR})
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH ${AWS_SDK_INSTALL_DIR})
-find_package(ZLIB REQUIRED)
+if (NOT WIN32)
+	find_package(ZLIB REQUIRED)
+endif()
 find_package(AWSSDK REQUIRED COMPONENTS s3 transfer)
 
 find_path(NEKO_INCLUDE_DIRS neko.h
