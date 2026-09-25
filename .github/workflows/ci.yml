@@ -68,6 +68,10 @@ jobs:
             os: macos-15-intel
             neko: osx64
             cmake-args: -DCMAKE_OSX_ARCHITECTURES=x86_64
+          - platform: MacArm64
+            os: macos-15
+            neko: osx-arm64
+            cmake-args: -DCMAKE_OSX_ARCHITECTURES=arm64
     runs-on: ${{ matrix.os }}
     defaults:
       run:
