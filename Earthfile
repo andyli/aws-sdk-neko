@@ -29,6 +29,8 @@ devcontainer-base:
     ARG ENABLE_NONROOT_DOCKER="true"
     ARG USE_MOBY="false"
     COPY .devcontainer/library-scripts/common-debian.sh .devcontainer/library-scripts/docker-debian.sh /tmp/library-scripts/
+    # Pre-install docker-compose such that docker-debian.sh wouldn't try to pip install it on non-x86_64
+    COPY +docker-compose/docker-compose /usr/local/bin/
     RUN apt-get update \
         && /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
         && /bin/bash /tmp/library-scripts/docker-debian.sh "${ENABLE_NONROOT_DOCKER}" "/var/run/docker-host.sock" "/var/run/docker.sock" "${USERNAME}" "${USE_MOBY}" \
@@ -63,8 +65,8 @@ devcontainer-base:
             # install docker engine for using `WITH DOCKER`
             docker-ce \
         # install haxe
-        && add-apt-repository ppa:haxe/haxe4.2 \
-        && apt-get install -qqy --no-install-recommends neko neko-dev haxe=1:4.2.* \
+        && add-apt-repository ppa:haxe/haxe4.3 \
+        && apt-get install -qqy --no-install-recommends neko neko-dev haxe=1:4.3.* \
         # install a recent git
         && add-apt-repository ppa:git-core/ppa \
         && apt-get install -qqy --no-install-recommends git \
@@ -87,10 +89,18 @@ awscli:
     SAVE ARTIFACT /aws
 
 # Usage:
+# COPY +docker-compose/docker-compose /usr/local/bin/
+docker-compose:
+    ARG DOCKER_COMPOSE_VERSION=5.5.1
+    RUN curl -fsSL "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$(uname -m)" -o /usr/local/bin/docker-compose \
+        && chmod +x /usr/local/bin/docker-compose
+    SAVE ARTIFACT /usr/local/bin/docker-compose
+
+# Usage:
 # COPY +doctl/doctl /usr/local/bin/
 doctl:
     ARG TARGETARCH
-    ARG DOCTL_VERSION=1.66.0
+    ARG DOCTL_VERSION=1.174.0
     RUN curl -fsSL "https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-${TARGETARCH}.tar.gz" | tar xvz -C /usr/local/bin/
     SAVE ARTIFACT /usr/local/bin/doctl
 
@@ -100,15 +110,16 @@ doctl:
 earthly:
     FROM +devcontainer-base
     ARG --required TARGETARCH
-    RUN curl -fsSL https://github.com/earthly/earthly/releases/download/v0.6.15/earthly-linux-${TARGETARCH} -o /usr/local/bin/earthly \
+    ARG EARTHLY_RELEASE=0.8.16
+    RUN curl -fsSL "https://github.com/earthly/earthly/releases/download/v${EARTHLY_RELEASE}/earthly-linux-${TARGETARCH}" -o /usr/local/bin/earthly \
         && chmod +x /usr/local/bin/earthly
     SAVE ARTIFACT /usr/local/bin/earthly
 
 rclone:
     FROM +devcontainer-base
     ARG --required TARGETARCH
-    ARG RCLONE_VERSION=1.57.0
-    RUN curl -fsSL "https://downloads.rclone.org/v1.57.0/rclone-v1.57.0-linux-${TARGETARCH}.zip" -o rclone.zip \
+    ARG RCLONE_VERSION=1.75.1
+    RUN curl -fsSL "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-${TARGETARCH}.zip" -o rclone.zip \
         && unzip -qq rclone.zip \
         && rm rclone.zip
     SAVE ARTIFACT rclone-*/rclone
